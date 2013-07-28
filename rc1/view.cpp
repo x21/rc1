@@ -1,24 +1,27 @@
 #include <QDebug>
-#include <sys/time.h>
-#include "view.h"
 #include <QtWidgets>
 #include <QTimer>
+#include "view.h"
+#include "event/eventhandlerrect.h"
+#include "comm/senderdebug.h"
 
 View::View(QWidget *parent) :
     QGLWidget(parent)
 {
     setAttribute(Qt::WA_AcceptTouchEvents,true);
-//    qDebug() << "View()";
-    s=new Storage();
+    qDebug() << "View() size:" << width() << " " << height();
+    stor=new Storage();
+    lmod=new LayoutModel();
+    ehand=new EventHandlerRect(lmod, new SenderDebug());
+    lmod->calcGeo(width(),height());
 
     QTimer *timer = new QTimer(this);
-//! [4] //! [5]
     connect(timer, SIGNAL(timeout()), this, SLOT(update()));
-//! [5] //! [6]
     timer->start(10);
 
     fpsT.start();
     fcnt=0;
+
 }
 
 void View::paintEvent(QPaintEvent *event)
@@ -31,15 +34,15 @@ void View::paintEvent(QPaintEvent *event)
 
     QPainter painter(this);
 
-    painter.fillRect(0,0,width,height,Qt::red);
-    painter.fillRect(20,20,width-40,height-40,Qt::black);
-    painter.fillRect(40,40,width-80,height-80,Qt::green);
+    painter.fillRect(0,0,width(),height(),Qt::red);
+    painter.fillRect(20,20,width()-40,height()-40,Qt::black);
+    painter.fillRect(40,40,width()-80,height()-80,Qt::green);
 
     painter.setBrush(Qt::green);
-    for(int i=0; i<s->getLen();i++) {
-        painter.fillRect(s->getX(i),s->getY(i),50,50,Qt::blue);
-        painter.drawEllipse(s->getX(i)+5,s->getY(i)+5,40,40);
-//        qDebug() << "fillRect " << s->getX(i) << " " << s->getY(i);
+    for(int i=0; i<stor->getLen();i++) {
+        painter.fillRect(stor->getX(i),stor->getY(i),50,50,Qt::blue);
+        painter.drawEllipse(stor->getX(i)+5,stor->getY(i)+5,40,40);
+//        qDebug() << "fillRect " << s.getX(i) << " " << s.getY(i);
     }
 
     painter.setBrush(Qt::red);
@@ -53,22 +56,22 @@ void View::paintEvent(QPaintEvent *event)
     fcnt++;
 }
 
-void View::resizeEvent(QResizeEvent *event)
+void View::resizeEvent(QResizeEvent *)
 {
-    width=event->size().width();
-    height=event->size().height();
+    qDebug() << "resize event";
+    lmod->calcGeo(width(),height());
 }
 
 bool View::event(QEvent *event)
 {
     QList<QTouchEvent::TouchPoint> touchPoints;
-    timeval t1;
     QString sEvent;
     if( event->type()==QEvent::TouchEnd ||
         event->type()==QEvent::TouchUpdate ||
         event->type()==QEvent::TouchBegin ) {
 
-        gettimeofday(&t1, NULL);
+        nomouse=true;
+
         if(event->type()==QEvent::TouchEnd) {
             sEvent="TouchEnd";
         } else if(event->type()==QEvent::TouchUpdate) {
@@ -80,24 +83,33 @@ bool View::event(QEvent *event)
         touchPoints = static_cast<QTouchEvent *>(event)->touchPoints();
         foreach (const QTouchEvent::TouchPoint &touchPoint, touchPoints) {
 //            qDebug() << sEvent << ": x:" << touchPoint.pos().x() << " y:" << touchPoint.pos().y() << " t: " << t1.tv_sec << "." << t1.tv_usec;
-            s->put(touchPoint.pos().x(),touchPoint.pos().y());
+            stor->put(touchPoint.pos().x(),touchPoint.pos().y());
+            ehand->processPoint(touchPoint.id(),touchPoint.state(),touchPoint.pos().x(),touchPoint.pos().y());
         }
         return true;
-    } else if(  event->type()==QEvent::MouseMove ||
+    } else if(  !nomouse && (
+                event->type()==QEvent::MouseMove ||
                 event->type()==QEvent::MouseButtonPress ||
-                event->type()==QEvent::MouseButtonRelease ) {
+                event->type()==QEvent::MouseButtonRelease )) {
 
-        gettimeofday(&t1, NULL);
         const QMouseEvent * meve = static_cast<QMouseEvent *>(event);
+
+        Qt::TouchPointState state;
+
         if(event->type()==QEvent::MouseMove) {
             sEvent="MouseMove";
+            state=Qt::TouchPointMoved;
         } else if(event->type()==QEvent::MouseButtonPress) {
             sEvent="MouseButtonPress";
+            state=Qt::TouchPointPressed;
+            eventId++;
         } else if(event->type()==QEvent::MouseButtonRelease) {
             sEvent="MouseButtonRelease";
+            state=Qt::TouchPointReleased;
         }
 //        qDebug() << sEvent << ": x:" << meve->pos().x() << " y:" << meve->pos().y() << " t: " << t1.tv_sec << "." << t1.tv_usec;
-        s->put(meve->pos().x(),meve->pos().y());
+        stor->put(meve->pos().x(),meve->pos().y());
+        ehand->processPoint(eventId,state,meve->pos().x(),meve->pos().y());
         return true;
     }
     return QWidget::event(event);

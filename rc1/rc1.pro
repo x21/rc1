@@ -14,11 +14,19 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
     view.cpp \
-    storage.cpp
+    storage.cpp \
+    conf/layoutmodel.cpp \
+    event/eventhandlerrect.cpp \
+    comm/senderdebug.cpp
 
 HEADERS  += \
     view.h \
-    storage.h
+    storage.h \
+    conf/layoutmodel.h \
+    event/eventhandlerrect.h \
+    comm/isender.h \
+    event/ieventhandler.h \
+    comm/senderdebug.h
 
 OTHER_FILES += \
     android/res/values-ru/strings.xml \

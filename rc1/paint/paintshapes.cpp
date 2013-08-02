@@ -5,6 +5,7 @@ PaintShapes::PaintShapes()
     nparams=1;
     params=new float[nparams];
     params[0]=5000.0;
+    pps=new PointPaintShape();
 }
 
 void PaintShapes::paint(View *view, QPainter *pnt)
@@ -16,8 +17,9 @@ void PaintShapes::paint(View *view, QPainter *pnt)
         if(p!=NULL) {
             if(view->getNow()-p->getT() < params[0]) {
                 if(p->getX()>=0 && p->getY()>=0) {
-                    pnt->fillRect(p->getX(),p->getY(),50,50,Qt::blue);
-                    pnt->drawEllipse(p->getX()+5,p->getY()+5,40,40);
+                    pps->paint(p,view,pnt);
+/*                    pnt->fillRect(p->getX(),p->getY(),50,50,Qt::blue);
+                    pnt->drawEllipse(p->getX()+5,p->getY()+5,40,40);*/
                 }
 
             }

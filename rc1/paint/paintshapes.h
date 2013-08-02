@@ -2,6 +2,7 @@
 #define PAINERSHAPES_H
 
 #include "ipaint.h"
+#include  "pointpaintshape.h"
 
 class PaintShapes : public IPaint
 {
@@ -15,6 +16,7 @@ public:
     virtual void setParam(quint16 n, float v);
 
 private:
+    PointPaintShape * pps;
     float * params;
     quint16 nparams;
     quint16 ncols;

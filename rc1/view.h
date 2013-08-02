@@ -27,6 +27,9 @@ public:
     int getFps();
     QTime *getFpsT();
 
+    long getTtl() const;
+    void setTtl(long value);
+
 protected:
     void paintEvent(QPaintEvent *event);
     void resizeEvent(QResizeEvent *event);
@@ -39,7 +42,10 @@ private:
     IEventHandler * ehand;
     IPaint ** painters;
 
+    int nPainters;
+
     long now;
+    long ttl;   // time to live for points
 
     // fps statistic
     int fps;

@@ -10,6 +10,7 @@ Point::Point()
     yn=0;
     t=0;
     gid=0;
+    ttl=5000;
 }
 
 void Point::set(int x, int y, int w, int h)
@@ -55,6 +56,10 @@ void Point::setT(long t)
     this->t=t;
 }
 
+void Point::setTTL(long ttl)
+{
+    this->ttl=ttl;
+}
 
 void Point::setGid(int id)
 {

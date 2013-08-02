@@ -13,16 +13,18 @@ View::View(QWidget *parent) :
     QGLWidget(parent)
 {
     setAttribute(Qt::WA_AcceptTouchEvents,true);
-    qDebug() << "View() size:" << width() << " " << height();
+//    qDebug() << "View() size:" << width() << " " << height();
     eventId = 1;
     nomouse = false;
+    ttl=5000;
 
     storage=new Storage();
     layout=new LayoutModel();
     ehand=new EventHandlerRect(layout, new SenderDebug());
     layout->calcGeo(width(),height());
 
-    painters=new IPaint*[3];
+    nPainters=3;
+    painters=new IPaint*[nPainters];
     painters[0]=new PaintBgShapes();
     painters[1]=new PaintShapes();
     painters[2]=new PaintStat();
@@ -47,13 +49,9 @@ void View::paintEvent(QPaintEvent *event)
 
     QPainter painter(this);
 
-    painters[0]->paint(this,&painter);
-    painters[1]->paint(this,&painter);
-    painters[2]->paint(this,&painter);
-
-/*    painter.fillRect(0,0,width(),height(),Qt::red);
-    painter.fillRect(20,20,width()-40,height()-40,Qt::black);
-    painter.fillRect(40,40,width()-80,height()-80,Qt::green);*/
+    for(int i=0;i<nPainters;i++) {
+        painters[i]->paint(this,&painter);
+    }
 
     fcnt++;
 }
@@ -159,4 +157,14 @@ int View::getFps()
 QTime * View::getFpsT()
 {
     return &fpsT;
+}
+
+long View::getTtl() const
+{
+    return ttl;
+}
+
+void View::setTtl(long value)
+{
+    ttl = value;
 }

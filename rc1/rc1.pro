@@ -22,7 +22,8 @@ SOURCES += main.cpp\
     point.cpp \
     paint/paintbgshapes.cpp \
     paint/paintshapes.cpp \
-    paint/paintstat.cpp
+    paint/paintstat.cpp \
+    paint/pointpaintshape.cpp
 
 HEADERS  += \
     view.h \
@@ -39,7 +40,8 @@ HEADERS  += \
     paint/ipointpaint.h \
     paint/paintbgshapes.h \
     paint/paintshapes.h \
-    paint/paintstat.h
+    paint/paintstat.h \
+    paint/pointpaintshape.h
 
 OTHER_FILES += \
     android/res/values-ru/strings.xml \

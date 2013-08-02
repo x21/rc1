@@ -12,6 +12,7 @@ public:
     void setWidth(int w);
     void setHeight(int h);
     void setT(long t);
+    void setTTL(long ttl);
     void setGid(int id);
 
     int getX();
@@ -29,6 +30,7 @@ private:
     int width;
     int height;
     long t;
+    long ttl;
     int gid;
 };
 

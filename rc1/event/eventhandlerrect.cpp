@@ -108,6 +108,9 @@ void EventHandlerRect::processPoint(int touchPointId, Qt::TouchPointState touchP
 
 void EventHandlerRect::init()
 {
+    chan = 1;
+    veldef = 127;
+
     ieventoutnext=1;
 
     useCCCVal=true;

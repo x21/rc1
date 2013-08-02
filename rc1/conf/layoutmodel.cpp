@@ -3,6 +3,8 @@
 
 LayoutModel::LayoutModel()
 {
+    width=200;
+    height=200;
     nrows=2;
 
     nseg = new int[nrows];

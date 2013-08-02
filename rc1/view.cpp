@@ -4,28 +4,41 @@
 #include "view.h"
 #include "event/eventhandlerrect.h"
 #include "comm/senderdebug.h"
+#include "paint/paintbgshapes.h"
+#include "paint/paintshapes.h"
+#include "paint/paintstat.h"
+
 
 View::View(QWidget *parent) :
     QGLWidget(parent)
 {
     setAttribute(Qt::WA_AcceptTouchEvents,true);
     qDebug() << "View() size:" << width() << " " << height();
-    stor=new Storage();
-    lmod=new LayoutModel();
-    ehand=new EventHandlerRect(lmod, new SenderDebug());
-    lmod->calcGeo(width(),height());
+    eventId = 1;
+    nomouse = false;
+
+    storage=new Storage();
+    layout=new LayoutModel();
+    ehand=new EventHandlerRect(layout, new SenderDebug());
+    layout->calcGeo(width(),height());
+
+    painters=new IPaint*[3];
+    painters[0]=new PaintBgShapes();
+    painters[1]=new PaintShapes();
+    painters[2]=new PaintStat();
 
     QTimer *timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(update()));
     timer->start(10);
 
     fpsT.start();
-    fcnt=0;
-
+    fcnt=0;    
 }
 
 void View::paintEvent(QPaintEvent *event)
 {
+    now=QDateTime::currentMSecsSinceEpoch();
+
     if(fpsT.elapsed()>1000) {
         fpsT.restart();
         fps=fcnt;
@@ -34,32 +47,25 @@ void View::paintEvent(QPaintEvent *event)
 
     QPainter painter(this);
 
-    painter.fillRect(0,0,width(),height(),Qt::red);
+    painters[0]->paint(this,&painter);
+    painters[1]->paint(this,&painter);
+    painters[2]->paint(this,&painter);
+
+/*    painter.fillRect(0,0,width(),height(),Qt::red);
     painter.fillRect(20,20,width()-40,height()-40,Qt::black);
-    painter.fillRect(40,40,width()-80,height()-80,Qt::green);
-
-    painter.setBrush(Qt::green);
-    for(int i=0; i<stor->getLen();i++) {
-        painter.fillRect(stor->getX(i),stor->getY(i),50,50,Qt::blue);
-        painter.drawEllipse(stor->getX(i)+5,stor->getY(i)+5,40,40);
-//        qDebug() << "fillRect " << s.getX(i) << " " << s.getY(i);
-    }
-
-    painter.setBrush(Qt::red);
-    painter.setFont(QFont("Sans",50,5));
-    painter.drawText(50,150,"touch me ॐ c1Audio");
-    QString fpss;
-    fpss.sprintf("%d fps",fps);
-    painter.drawText(50,250,fpss);
-    painter.drawText(50,350,QString(fpsT.toString()));
+    painter.fillRect(40,40,width()-80,height()-80,Qt::green);*/
 
     fcnt++;
 }
 
 void View::resizeEvent(QResizeEvent *)
 {
-    qDebug() << "resize event";
-    lmod->calcGeo(width(),height());
+    //qDebug() << "resize event";
+    layout->calcGeo(width(),height());
+    for(int i=0;i<storage->getLen();i++) {
+        storage->getPoint(i)->setWidth(width());
+        storage->getPoint(i)->setHeight(height());
+    }
 }
 
 bool View::event(QEvent *event)
@@ -67,8 +73,11 @@ bool View::event(QEvent *event)
     QList<QTouchEvent::TouchPoint> touchPoints;
     QString sEvent;
     if( event->type()==QEvent::TouchEnd ||
-        event->type()==QEvent::TouchUpdate ||
-        event->type()==QEvent::TouchBegin ) {
+            event->type()==QEvent::TouchUpdate ||
+            event->type()==QEvent::TouchBegin ) {
+
+        QDateTime ct = QDateTime::currentDateTime();
+        long t=ct.toMSecsSinceEpoch();
 
         nomouse=true;
 
@@ -82,15 +91,22 @@ bool View::event(QEvent *event)
 
         touchPoints = static_cast<QTouchEvent *>(event)->touchPoints();
         foreach (const QTouchEvent::TouchPoint &touchPoint, touchPoints) {
-//            qDebug() << sEvent << ": x:" << touchPoint.pos().x() << " y:" << touchPoint.pos().y() << " t: " << t1.tv_sec << "." << t1.tv_usec;
-            stor->put(touchPoint.pos().x(),touchPoint.pos().y());
+            //            qDebug() << sEvent << ": x:" << touchPoint.pos().x() << " y:" << touchPoint.pos().y() << " t: " << t1.tv_sec << "." << t1.tv_usec;
+            Point * p = storage->getPoint(0);
+            p->set(touchPoint.pos().x(),touchPoint.pos().y(),this->width(),this->height());
+            p->setT(t);
+            p->setGid(touchPoint.id());
+            storage->next();
             ehand->processPoint(touchPoint.id(),touchPoint.state(),touchPoint.pos().x(),touchPoint.pos().y());
         }
         return true;
     } else if(  !nomouse && (
-                event->type()==QEvent::MouseMove ||
-                event->type()==QEvent::MouseButtonPress ||
-                event->type()==QEvent::MouseButtonRelease )) {
+                    event->type()==QEvent::MouseMove ||
+                    event->type()==QEvent::MouseButtonPress ||
+                    event->type()==QEvent::MouseButtonRelease )) {
+
+        QDateTime ct = QDateTime::currentDateTime();
+        long t=ct.toMSecsSinceEpoch();
 
         const QMouseEvent * meve = static_cast<QMouseEvent *>(event);
 
@@ -107,10 +123,40 @@ bool View::event(QEvent *event)
             sEvent="MouseButtonRelease";
             state=Qt::TouchPointReleased;
         }
-//        qDebug() << sEvent << ": x:" << meve->pos().x() << " y:" << meve->pos().y() << " t: " << t1.tv_sec << "." << t1.tv_usec;
-        stor->put(meve->pos().x(),meve->pos().y());
+        //        qDebug() << sEvent << ": x:" << meve->pos().x() << " y:" << meve->pos().y() << " t: " << t1.tv_sec << "." << t1.tv_usec;
+
+        Point * p = storage->getPoint(0);
+        p->set(meve->pos().x(),meve->pos().y(),this->width(),this->height());
+        p->setT(t);
+        p->setGid(eventId);
+        storage->next();
         ehand->processPoint(eventId,state,meve->pos().x(),meve->pos().y());
         return true;
     }
     return QWidget::event(event);
+}
+
+Storage *View::getStorage() const
+{
+    return storage;
+}
+
+LayoutModel *View::getLayout() const
+{
+    return layout;
+}
+
+long View::getNow()
+{
+    return now;
+}
+
+int View::getFps()
+{
+    return fps;
+}
+
+QTime * View::getFpsT()
+{
+    return &fpsT;
 }

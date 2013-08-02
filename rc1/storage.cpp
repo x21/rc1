@@ -3,46 +3,43 @@
 
 Storage::Storage()
 {
-    len=1000;
-    x = new int[len];
-    y = new int[len];
+    len=100;
+    pnts = new Point*[len];
     put_pnt=0;
+    for(int i=0;i<len;i++) {
+        pnts[i]=new Point();
+    }
 }
 
-void Storage::put(int x, int y)
+/*
+void Storage::put(Point *p)
 {
-//    qDebug() << "Storage put " << put_pnt << " x: " << x << " y: " << y;
-    this->x[put_pnt]=x;
-    this->y[put_pnt]=y;
+//    qDebug() << "Storage put " << put_pnt;
+    if(pnts[put_pnt]!=NULL) {
+        delete(pnts[put_pnt]);
+    }
+    pnts[put_pnt]=p;
+}
+*/
+
+void Storage::next()
+{
     put_pnt++;
     if(put_pnt>=len) {
         put_pnt=0;
     }
 }
 
-int Storage::getX(int i)
+Point *Storage::getPoint(int i)
 {
     if(i<len) {
         int j=put_pnt-i;
         if(j<0) {
             j+=len;
         }
-        return x[j];
+        return pnts[j];
     } else {
-        return -1;
-    }
-}
-
-int Storage::getY(int i)
-{
-    if(i<len) {
-        int j=put_pnt-i;
-        if(j<0) {
-            j+=len;
-        }
-        return y[j];
-    } else {
-        return -1;
+        return NULL;
     }
 }
 

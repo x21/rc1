@@ -7,17 +7,39 @@
 #include <QEvent>
 #include <QTime>
 
+//#include "iview.h"
 #include "storage.h"
 #include "event/ieventhandler.h"
+
+#include "paint/ipaint.h"
+
+class IPaint;
 
 class View : public QGLWidget
 {
     Q_OBJECT
 
+public:
+    explicit View(QWidget *parent = 0);
+    Storage *getStorage() const;
+    LayoutModel *getLayout() const;
+    long getNow();
+    int getFps();
+    QTime *getFpsT();
+
+protected:
+    void paintEvent(QPaintEvent *event);
+    void resizeEvent(QResizeEvent *event);
+    bool event(QEvent *event);
+
+
 private:
-    Storage * stor;
-    LayoutModel * lmod;
+    Storage * storage;
+    LayoutModel * layout;
     IEventHandler * ehand;
+    IPaint ** painters;
+
+    long now;
 
     // fps statistic
     int fps;
@@ -25,20 +47,8 @@ private:
     QTime fpsT;
 
     // emulated touch point id for mouse events
-    int eventId = 1;
-    bool nomouse = false;
-
-public:
-    explicit View(QWidget *parent = 0);
-
-protected:
-    void paintEvent(QPaintEvent *event);
-    void resizeEvent(QResizeEvent *event);
-    bool event(QEvent *event);
-
-signals:
-    
-public slots:
+    int eventId;
+    bool nomouse;
     
 };
 

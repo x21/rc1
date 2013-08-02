@@ -14,25 +14,25 @@ private:
     LayoutModel * mod;
     ISender * snd;
 
-    int ntp;   // number of simultanously possible touchpoints
+    int ntp;            // number of simultanously possible touchpoints
 
     bool * act;         // is touched?
     int * ievent;       // current event Index
     int * ieventout;    // event id sent (one input event can lead in several output events)
     int ieventoutnext;  // id of next output event
 
-    int * note;   // current note
+    int * note;         // current note
 
-    double * ccval1;  // current controller1 value: xrel
-    double * ccval2;  // current controller1 value: yrel
+    double * ccval1;    // current controller1 value: xrel
+    double * ccval2;    // current controller1 value: yrel
 
-    double cccval1;   // common cc value, average of individual ccvals
-    double cccval2;   // common cc value, average of individual ccvals
+    double cccval1;     // common cc value, average of individual ccvals
+    double cccval2;     // common cc value, average of individual ccvals
     bool useCCCVal;
-    int cccvalAvg;    // number of individual ccvals for average calc
+    int cccvalAvg;      // number of individual ccvals for average calc
 
-    int chan = 1;       // transmit channel
-    int veldef = 127;   // default velovity
+    int chan;           // transmit channel
+    int veldef;         // default velovity
 
     void init();
 };

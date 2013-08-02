@@ -17,7 +17,12 @@ SOURCES += main.cpp\
     storage.cpp \
     conf/layoutmodel.cpp \
     event/eventhandlerrect.cpp \
-    comm/senderdebug.cpp
+    comm/senderdebug.cpp \
+    test/unittest.cpp \
+    point.cpp \
+    paint/paintbgshapes.cpp \
+    paint/paintshapes.cpp \
+    paint/paintstat.cpp
 
 HEADERS  += \
     view.h \
@@ -26,7 +31,15 @@ HEADERS  += \
     event/eventhandlerrect.h \
     comm/isender.h \
     event/ieventhandler.h \
-    comm/senderdebug.h
+    comm/senderdebug.h \
+    test/unittest.h \
+    iview.h \
+    point.h \
+    paint/ipaint.h \
+    paint/ipointpaint.h \
+    paint/paintbgshapes.h \
+    paint/paintshapes.h \
+    paint/paintstat.h
 
 OTHER_FILES += \
     android/res/values-ru/strings.xml \

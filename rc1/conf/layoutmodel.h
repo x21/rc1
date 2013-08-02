@@ -34,8 +34,8 @@ private:
     int *note;
     int *ctlx;
     int *ctly;
-    int width = 200;
-    int height = 200;
+    int width;
+    int height;
 
     void setAll(int n, int * d, int v);
 

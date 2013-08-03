@@ -4,13 +4,14 @@
 #
 #-------------------------------------------------
 
-QT       += core gui opengl
+QT       += core gui opengl network
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = rc1
 TEMPLATE = app
 
+INCLUDEPATH += comm/libofqf
 
 SOURCES += main.cpp\
     view.cpp \
@@ -23,7 +24,17 @@ SOURCES += main.cpp\
     paint/paintbgshapes.cpp \
     paint/paintshapes.cpp \
     paint/paintstat.cpp \
-    paint/pointpaintshape.cpp
+    paint/pointpaintshape.cpp \
+    comm/libofqf/qosctypes.cpp \
+    comm/libofqf/qosctcpserverthread.cpp \
+    comm/libofqf/qosctcpserver.cpp \
+    comm/libofqf/qosctcpclient.cpp \
+    comm/libofqf/qoscserver.cpp \
+    comm/libofqf/qoscproxyinterface.cpp \
+    comm/libofqf/qoscproxy.cpp \
+    comm/libofqf/qoscmsgparser.cpp \
+    comm/libofqf/qoscclient.cpp \
+    comm/senderoscpuredata.cpp
 
 HEADERS  += \
     view.h \
@@ -41,7 +52,19 @@ HEADERS  += \
     paint/paintbgshapes.h \
     paint/paintshapes.h \
     paint/paintstat.h \
-    paint/pointpaintshape.h
+    paint/pointpaintshape.h \
+    comm/libofqf/qosctypes.h \
+    comm/libofqf/qosctcpserverthread.h \
+    comm/libofqf/qosctcpserver.h \
+    comm/libofqf/qosctcpclient.h \
+    comm/libofqf/qoscserverinterface.h \
+    comm/libofqf/qoscserver.h \
+    comm/libofqf/qoscproxyinterface.h \
+    comm/libofqf/qoscproxy.h \
+    comm/libofqf/qoscmsgparser.h \
+    comm/libofqf/qoscclientinterface.h \
+    comm/libofqf/qoscclient.h \
+    comm/senderoscpuredata.h
 
 OTHER_FILES += \
     android/res/values-ru/strings.xml \

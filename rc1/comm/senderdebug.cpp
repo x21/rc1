@@ -16,12 +16,7 @@ void SenderDebug::pc(int c, int v1)
     qDebug() << "SenderDebug::pc(" << c << "," << v1 << ")";
 }
 
-void SenderDebug::noteOn(int c, int voiceId, int v1, int v2)
+void SenderDebug::note(int c, int voiceId, int v1, int v2)
 {
-    qDebug() << "SenderDebug::noteOn(" << c << "," << voiceId << "," << v1 << "," << v2 << ")";
-}
-
-void SenderDebug::noteOff(int c, int voiceId, int v1)
-{
-    qDebug() << "SenderDebug::noteOff(" << c << "," << voiceId << "," << v1 << ")";
+    qDebug() << "SenderDebug::note(" << c << "," << voiceId << "," << v1 << "," << v2 << ")";
 }

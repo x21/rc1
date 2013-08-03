@@ -4,6 +4,7 @@
 #include "view.h"
 #include "event/eventhandlerrect.h"
 #include "comm/senderdebug.h"
+#include "comm/senderoscpuredata.h"
 #include "paint/paintbgshapes.h"
 #include "paint/paintshapes.h"
 #include "paint/paintstat.h"
@@ -20,7 +21,7 @@ View::View(QWidget *parent) :
 
     storage=new Storage();
     layout=new LayoutModel();
-    ehand=new EventHandlerRect(layout, new SenderDebug());
+    ehand=new EventHandlerRect(layout, new SenderOscPuredata());
     layout->calcGeo(width(),height());
 
     nPainters=3;

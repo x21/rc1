@@ -20,6 +20,7 @@
         <item>lib--Managed_by_Qt_Creator--plugins_imageformats_libqsvg.so:plugins/imageformats/libqsvg.so</item>
         <item>lib--Managed_by_Qt_Creator--plugins_imageformats_libqjpeg.so:plugins/imageformats/libqjpeg.so</item>
         <item>lib--Managed_by_Qt_Creator--plugins_imageformats_libqgif.so:plugins/imageformats/libqgif.so</item>
+        <item>lib--Managed_by_Qt_Creator--plugins_bearer_libqgenericbearer.so:plugins/bearer/libqgenericbearer.so</item>
         <item>lib--Managed_by_Qt_Creator--plugins_accessible_libqtaccessiblewidgets.so:plugins/accessible/libqtaccessiblewidgets.so</item>
         <item>lib--Managed_by_Qt_Creator--plugins_accessible_libqtaccessiblequick.so:plugins/accessible/libqtaccessiblequick.so</item>
     </array>
@@ -28,6 +29,7 @@
         <item>gnustl_shared</item>
         <item>Qt5Core</item>
         <item>Qt5Gui</item>
+        <item>Qt5Network</item>
         <item>Qt5Widgets</item>
         <item>Qt5OpenGL</item>
     </array>

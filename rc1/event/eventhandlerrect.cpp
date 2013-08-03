@@ -1,6 +1,7 @@
 #include <QDebug>
 #include "eventhandlerrect.h"
 #include "comm/senderdebug.h"
+#include "comm/senderoscpuredata.h"
 
 EventHandlerRect::EventHandlerRect()
 {
@@ -68,11 +69,11 @@ void EventHandlerRect::processPoint(int touchPointId, Qt::TouchPointState touchP
 
         if(note[evptr]!=v1) {
             if(note[evptr]>0) {
-                snd->noteOff(chan,ieventout[evptr],note[evptr]);
+                snd->note(chan,ieventout[evptr],note[evptr],0);
             }
             ieventout[evptr]=ieventoutnext;
             ieventoutnext++;
-            snd->noteOn(chan,ieventout[evptr], v1, veldef);
+            snd->note(chan,ieventout[evptr], v1, veldef);
             note[evptr]=v1;
         }
 
@@ -101,7 +102,7 @@ void EventHandlerRect::processPoint(int touchPointId, Qt::TouchPointState touchP
 
     } else if( touchPointState == Qt::TouchPointReleased ) {
         act[evptr]=false;
-        snd->noteOff(chan,ieventout[evptr],note[evptr]);
+        snd->note(chan,ieventout[evptr],note[evptr],0);
         note[evptr]=-1;
     }
 }

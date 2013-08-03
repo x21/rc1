@@ -13,7 +13,9 @@
 /home/c1/rc1/rc1/android/libs/armeabi-v7a/lib--Managed_by_Qt_Creator--plugins_platforms_libqminimal.so \
 /home/c1/rc1/rc1/android/libs/armeabi-v7a/lib--Managed_by_Qt_Creator--plugins_imageformats_libqico.so \
 /home/c1/rc1/rc1/android/libs/armeabi-v7a/libQt5OpenGL.so \
+/home/c1/rc1/rc1/android/libs/armeabi-v7a/libQt5Network.so \
 /home/c1/rc1/rc1/android/libs/armeabi-v7a/lib--Managed_by_Qt_Creator--plugins_accessible_libqtaccessiblewidgets.so \
+/home/c1/rc1/rc1/android/libs/armeabi-v7a/lib--Managed_by_Qt_Creator--plugins_bearer_libqgenericbearer.so \
 /home/c1/rc1/rc1/android/libs/armeabi-v7a/lib--Managed_by_Qt_Creator--plugins_accessible_libqtaccessiblequick.so \
 /home/c1/rc1/rc1/android/libs/armeabi-v7a/libQt5Widgets.so \
 /home/c1/rc1/rc1/android/libs/armeabi-v7a/lib--Managed_by_Qt_Creator--plugins_imageformats_libqwbmp.so \

@@ -111,8 +111,9 @@ bool View::event(QEvent *event)
             p->set(touchPoint.pos().x(),touchPoint.pos().y(),this->width(),this->height());
             p->setT(t);
             p->setGid(touchPoint.id());
+            p->setState(touchPoint.state());
             storage->next();
-            ehand->processPoint(touchPoint.id(),touchPoint.state(),touchPoint.pos().x(),touchPoint.pos().y());
+            ehand->processPoint(p);
         }
         return true;
     } else if(  !nomouse && (
@@ -141,8 +142,9 @@ bool View::event(QEvent *event)
         p->set(meve->pos().x(),meve->pos().y(),this->width(),this->height());
         p->setT(t);
         p->setGid(eventId);
+        p->setState(state);
         storage->next();
-        ehand->processPoint(eventId,state,meve->pos().x(),meve->pos().y());
+        ehand->processPoint(p);
         return true;
     }
     return QWidget::event(event);

@@ -66,6 +66,12 @@ void Point::setGid(int id)
     gid = id;
 }
 
+void Point::setState(int s)
+{
+    state=s;
+
+}
+
 int Point::getX()
 {
     return x;
@@ -94,4 +100,9 @@ long Point::getT()
 int Point::getGid()
 {
     return gid;
+}
+
+int Point::getState()
+{
+    return state;
 }

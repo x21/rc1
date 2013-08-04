@@ -17,26 +17,27 @@ EventHandlerRect::EventHandlerRect(LayoutModel *mod, ISender *snd)
     init();
 }
 
-void EventHandlerRect::processPoint(int touchPointId, Qt::TouchPointState touchPointState, quint16 x1, quint16 y1)
+//void EventHandlerRect::processPoint(int p->getGid(), Qt::TouchPointState touchPointState, quint16 x1, quint16 y1)
+void EventHandlerRect::processPoint(Point * p)
 {
     // 1. figure out, at which index (evptr) the data for this touch point is stored
-    qint16 evptr=touchPointId%ntp;
+    qint16 evptr=p->getGid()%ntp;
 
-    // qDebug() << "processPoint ptr " << evptr << " id " << touchPointId;
-    if(touchPointState==Qt::TouchPointPressed) {
+    // qDebug() << "processPoint ptr " << evptr << " id " << p->getGid();
+    if(p->getState()==Qt::TouchPointPressed) {
         if(act[evptr]!=true) {  // if needed, else ieventsub will be set to 0 by accitent -> hanging note
             act[evptr]=true;
-            ievent[evptr]=touchPointId;
+            ievent[evptr]=p->getGid();
             ieventout[evptr]=ieventoutnext;
             ieventoutnext++;
         }
     }
 
-    if( touchPointState == Qt::TouchPointPressed ||
-        touchPointState == Qt::TouchPointMoved ) {
+    if( p->getState() == Qt::TouchPointPressed ||
+        p->getState() == Qt::TouchPointMoved ) {
 
-        double xnorm=x1/mod->getWidth();
-        double ynorm=y1/mod->getHeight();
+        double xnorm=p->getXn();
+        double ynorm=p->getYn();
 
 //        qDebug() << "pressed: x1:" << x1 << " y1:" << y1 << " xnorm: " << xnorm << " ynorm: " << ynorm;
 
@@ -46,7 +47,7 @@ void EventHandlerRect::processPoint(int touchPointId, Qt::TouchPointState touchP
         int iseg=0;
         int ysum=0;
         int xsum=0;
-        while(y1>ysum && iy<mod->getNrows()) {
+        while(p->getY()>ysum && iy<mod->getNrows()) {
             ysum+=mod->getRowheightpx(iy);
             iseg+=mod->getNseg(iy);
             iy++;
@@ -55,7 +56,7 @@ void EventHandlerRect::processPoint(int touchPointId, Qt::TouchPointState touchP
         if(iy>0) {
             iy--;
             iseg-=mod->getNseg(iy);
-            while(x1>xsum && ix<mod->getNseg(iy)) {
+            while(p->getX()>xsum && ix<mod->getNseg(iy)) {
                 xsum+=mod->getSegwidthpx(iseg);
                 iseg++; ix++;
 //                qDebug() << "loop2 iseg:" << iseg << " xsum: " << xsum;
@@ -100,7 +101,7 @@ void EventHandlerRect::processPoint(int touchPointId, Qt::TouchPointState touchP
             }
         }
 
-    } else if( touchPointState == Qt::TouchPointReleased ) {
+    } else if( p->getState() == Qt::TouchPointReleased ) {
         act[evptr]=false;
         snd->note(chan,ieventout[evptr],note[evptr],0);
         note[evptr]=-1;

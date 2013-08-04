@@ -14,6 +14,7 @@ public:
     void setT(long t);
     void setTTL(long ttl);
     void setGid(int id);
+    void setState(int s);
 
     int getX();
     int getY();
@@ -21,6 +22,7 @@ public:
     double getYn();
     long getT();
     int getGid();
+    int getState();
 
 private:
     int x;
@@ -32,6 +34,7 @@ private:
     long t;
     long ttl;
     int gid;
+    int state;
 };
 
 #endif // POINT_H

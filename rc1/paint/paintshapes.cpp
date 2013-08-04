@@ -18,10 +18,7 @@ void PaintShapes::paint(View *view, QPainter *pnt)
             if(view->getNow()-p->getT() < params[0]) {
                 if(p->getX()>=0 && p->getY()>=0) {
                     pps->paint(p,view,pnt);
-/*                    pnt->fillRect(p->getX(),p->getY(),50,50,Qt::blue);
-                    pnt->drawEllipse(p->getX()+5,p->getY()+5,40,40);*/
                 }
-
             }
         }
     }

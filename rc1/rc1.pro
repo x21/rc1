@@ -45,7 +45,6 @@ HEADERS  += \
     event/ieventhandler.h \
     comm/senderdebug.h \
     test/unittest.h \
-    iview.h \
     point.h \
     paint/ipaint.h \
     paint/ipointpaint.h \

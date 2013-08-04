@@ -7,15 +7,16 @@
 #include <QEvent>
 #include <QTime>
 
-//#include "iview.h"
 #include "storage.h"
 #include "event/ieventhandler.h"
-
 #include "paint/ipaint.h"
+#include "paint/ipointpaint.h"
+#include "comm/libofqf/qosctypes.h"
 
 class IPaint;
+class IPointPaint;
 
-class View : public QGLWidget
+class View : public QGLWidget, PathObject
 {
     Q_OBJECT
 
@@ -31,18 +32,29 @@ public:
     void setTtl(long value);
 
 protected:
+    /*  QGLWidget implementation */
     void paintEvent(QPaintEvent *event);
     void resizeEvent(QResizeEvent *event);
     bool event(QEvent *event);
 
+    /*  PathObject (Server) implementation */
+    virtual void signalData( QString, QVariant, QHostAddress *, quint16 );
 
 private:
     Storage * storage;
     LayoutModel * layout;
     IEventHandler * ehand;
-    IPaint ** painters;
+    IPaint ** prepainters;
+    IPointPaint ** pointpainters;
+    IPaint ** postpainters;
 
-    int nPainters;
+    QOscServer * oscin;
+
+    QList<QHostAddress> ignoreAddr;
+
+    int nPrePainters;
+    int nPointPainters;
+    int nPostPainters;
 
     long now;
     long ttl;   // time to live for points

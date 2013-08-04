@@ -23,6 +23,7 @@ private:
     int ieventoutnext;  // id of next output event
 
     int * note;         // current note
+    int * chan;         // current note channel
 
     double * ccval1;    // current controller1 value: xrel
     double * ccval2;    // current controller1 value: yrel
@@ -32,7 +33,6 @@ private:
     bool useCCCVal;
     int cccvalAvg;      // number of individual ccvals for average calc
 
-    int chan;           // transmit channel
     int veldef;         // default velovity
 
     void init();

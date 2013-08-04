@@ -70,12 +70,13 @@ void EventHandlerRect::processPoint(Point * p)
 
         if(note[evptr]!=v1) {
             if(note[evptr]>0) {
-                snd->note(chan,ieventout[evptr],note[evptr],0);
+                snd->note(chan[evptr],ieventout[evptr],note[evptr],0);
             }
             ieventout[evptr]=ieventoutnext;
             ieventoutnext++;
-            snd->note(chan,ieventout[evptr], v1, veldef);
+            snd->note(mod->getChan(iseg),ieventout[evptr], v1, veldef);
             note[evptr]=v1;
+            chan[evptr]=mod->getChan(iseg);
         }
 
         if(mod->getCtlx(iseg)>0) {
@@ -83,9 +84,9 @@ void EventHandlerRect::processPoint(Point * p)
                 ccval1[evptr]=xnorm;
                 if(useCCCVal==true) {
                     cccval1=ccval1[evptr]/cccvalAvg+(cccvalAvg-1)*cccval1/cccvalAvg;
-                    snd->cc(chan, ieventout[evptr], mod->getCtlx(iseg), cccval1);
+                    snd->cc(mod->getChan(iseg), ieventout[evptr], mod->getCtlx(iseg), cccval1);
                 } else {
-                    snd->cc(chan, ieventout[evptr], mod->getCtlx(iseg), xnorm);
+                    snd->cc(mod->getChan(iseg), ieventout[evptr], mod->getCtlx(iseg), xnorm);
                 }
             }
         }
@@ -94,23 +95,22 @@ void EventHandlerRect::processPoint(Point * p)
                 ccval2[evptr]=ynorm;
                 if(useCCCVal==true) {
                     cccval2=ccval2[evptr]/cccvalAvg+(cccvalAvg-1)*cccval2/cccvalAvg;
-                    snd->cc(chan, ieventout[evptr], mod->getCtly(iseg), cccval2);
+                    snd->cc(mod->getChan(iseg), ieventout[evptr], mod->getCtly(iseg), cccval2);
                 } else {
-                    snd->cc(chan, ieventout[evptr], mod->getCtly(iseg), ynorm);
+                    snd->cc(mod->getChan(iseg), ieventout[evptr], mod->getCtly(iseg), ynorm);
                 }
             }
         }
 
     } else if( p->getState() == Qt::TouchPointReleased ) {
         act[evptr]=false;
-        snd->note(chan,ieventout[evptr],note[evptr],0);
+        snd->note(chan[evptr],ieventout[evptr],note[evptr],0);
         note[evptr]=-1;
     }
 }
 
 void EventHandlerRect::init()
 {
-    chan = 1;
     veldef = 127;
 
     ieventoutnext=1;
@@ -128,12 +128,14 @@ void EventHandlerRect::init()
     ccval1=new double[ntp];
     ccval2=new double[ntp];
     note=new int[ntp];
+    chan=new int[ntp];
 
     for(int i=0;i<ntp;i++) {
         ievent[i]=-1;
         ieventout[i]=0;
         act[i]=false;
         note[i]=-1;
+        chan[i]=-1;
         ccval1[i]=-1;
         ccval2[i]=-1;
     }

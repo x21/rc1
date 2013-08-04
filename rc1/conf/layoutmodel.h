@@ -20,6 +20,7 @@ public:
     int getNote(int i) const;
     int getCtlx(int i) const;
     int getCtly(int i) const;
+    int getChan(int i) const;
 
 
 private:
@@ -34,6 +35,7 @@ private:
     int *note;
     int *ctlx;
     int *ctly;
+    int *chan;
     int width;
     int height;
 

@@ -45,6 +45,9 @@ LayoutModel::LayoutModel()
     ctly=new int[12];
     setAll(12,ctly,0);
 
+    chan=new int[12];
+    setAll(12,chan,0);
+
     calcGeo(200,200);
 }
 
@@ -116,6 +119,11 @@ int LayoutModel::getSegwidth(int i) const
 int LayoutModel::getCtly(int i) const
 {
     return ctly[i];
+}
+
+int LayoutModel::getChan(int i) const
+{
+    return chan[i];
 }
 
 int LayoutModel::getCtlx(int i) const

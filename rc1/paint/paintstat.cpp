@@ -13,7 +13,6 @@ void PaintStat::paint(RC1 *view, QPainter *pnt)
     fpss.sprintf("%d fps@",view->getFps());
     fpss.append(view->getFpsT()->toString());
     pnt->drawText(10,50,fpss);
-//    pnt->drawText(50,350,QString(view->getFpsT()->toString()));
 }
 
 int PaintStat::getParamCount() {

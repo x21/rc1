@@ -3,12 +3,12 @@
 PaintBgShapes::PaintBgShapes()
 {
     sPenAct=160;
-    lPenAct=240;
+    lPenAct=0;
     sBrushAct=160;
     lBrushAct=200;
 
     sPenPsv=160;
-    lPenPsv=10;
+    lPenPsv=0;
     sBrushPsv=160;
     lBrushPsv=80;
 }
@@ -25,11 +25,10 @@ void PaintBgShapes::paint(RC1 *view, QPainter * pnt) {
 
     pnt->setPen(Qt::NoPen);
     for(int y = 0; y < lay->getNrows(); y++) {
-        ypaint1=ypaint+lay->getRowheightpx(y);
+        ypaint1=lay->getRowheightpx(y);
         xpaint=0;
         for (int x = 0; x < lay->getNseg(y); x ++) {
-            xpaint1=xpaint+lay->getSegwidthpx(iseg);
-
+            xpaint1=lay->getSegwidthpx(iseg);
             int col=21*(lay->getNote(iseg)%12);
             int lightP=lPenPsv;
             int lightB=lBrushPsv;
@@ -53,9 +52,8 @@ void PaintBgShapes::paint(RC1 *view, QPainter * pnt) {
             } else {
                 pnt->setPen(Qt::NoPen);
             }
-            pnt->drawRect(xpaint,ypaint,xpaint1-1,ypaint1-1);
-
-            xpaint=xpaint1;
+            pnt->drawRect(xpaint,ypaint,xpaint1,ypaint1);
+            xpaint+=xpaint1;
             iseg++;
         }
         ypaint+=ypaint1;

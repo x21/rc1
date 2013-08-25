@@ -76,7 +76,7 @@ void LayoutModel::calcGeo(int w, int h)
             segwidthsum+=segwidthpx[i];
             // -> add additional pixels to last segment
             if(x==nseg[y]-1 && segwidthsum<width) {
-                segwidthpx[i]+=segwidthsum-width;
+                segwidthpx[i]+=width-segwidthsum;
             }
             i++;
         }

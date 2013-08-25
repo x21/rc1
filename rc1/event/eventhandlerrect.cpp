@@ -13,7 +13,7 @@ EventHandlerRect::EventHandlerRect()
 void EventHandlerRect::processPoint(Point * p, RC1 *view)
 {
     ISender * snd=view->getSender();
-    LayoutModel * v=view->getLayout();
+    LayoutModel * layout=view->getLayout();
 
     // 1. figure out, at which index (evptr) the data for this touch point is stored
     qint16 evptr=p->getGid()%ntp;
@@ -42,17 +42,17 @@ void EventHandlerRect::processPoint(Point * p, RC1 *view)
         int iseg=0;
         int ysum=0;
         int xsum=0;
-        while(p->getY()>ysum && iy<v->getNrows()) {
-            ysum+=v->getRowheightpx(iy);
-            iseg+=v->getNseg(iy);
+        while(p->getY()>ysum && iy<layout->getNrows()) {
+            ysum+=layout->getRowheightpx(iy);
+            iseg+=layout->getNseg(iy);
             iy++;
 //            qDebug() << "loop1 iy:" << iy << " iseg:" << iseg << " ysum: " << ysum;
         }
         if(iy>0) {
             iy--;
-            iseg-=v->getNseg(iy);
-            while(p->getX()>xsum && ix<v->getNseg(iy)) {
-                xsum+=v->getSegwidthpx(iseg);
+            iseg-=layout->getNseg(iy);
+            while(p->getX()>xsum && ix<layout->getNseg(iy)) {
+                xsum+=layout->getSegwidthpx(iseg);
                 iseg++; ix++;
 //                qDebug() << "loop2 iseg:" << iseg << " xsum: " << xsum;
             }
@@ -61,38 +61,45 @@ void EventHandlerRect::processPoint(Point * p, RC1 *view)
             }
         }
 
-        int v1=v->getNote(iseg);
-
+        int v1=layout->getNote(iseg);
         if(note[evptr]!=v1) {
             if(note[evptr]>0) {
                 snd->note(chan[evptr],ieventout[evptr],note[evptr],0);
             }
             ieventout[evptr]=ieventoutnext;
             ieventoutnext++;
-            snd->note(v->getChan(iseg),ieventout[evptr], v1, veldef);
+            snd->note(layout->getChan(iseg),ieventout[evptr], v1, veldef);
             note[evptr]=v1;
-            chan[evptr]=v->getChan(iseg);
+            chan[evptr]=layout->getChan(iseg);
         }
 
-        if(v->getCtlx(iseg)>0) {
+        if(isegb[evptr]!=iseg) {
+            if(isegb[evptr]!=-1) {
+                layout->decPressed(isegb[evptr]);
+            }
+            isegb[evptr]=iseg;
+            layout->incPressed(isegb[evptr]);
+        }
+
+        if(layout->getCtlx(iseg)>0) {
             if(xnorm!=ccval1[evptr]) {
                 ccval1[evptr]=xnorm;
                 if(useCCCVal==true) {
                     cccval1=ccval1[evptr]/cccvalAvg+(cccvalAvg-1)*cccval1/cccvalAvg;
-                    snd->cc(v->getChan(iseg), ieventout[evptr], v->getCtlx(iseg), cccval1);
+                    snd->cc(layout->getChan(iseg), ieventout[evptr], layout->getCtlx(iseg), cccval1);
                 } else {
-                    snd->cc(v->getChan(iseg), ieventout[evptr], v->getCtlx(iseg), xnorm);
+                    snd->cc(layout->getChan(iseg), ieventout[evptr], layout->getCtlx(iseg), xnorm);
                 }
             }
         }
-        if(v->getCtly(iseg)>0) {
+        if(layout->getCtly(iseg)>0) {
             if(ynorm!=ccval2[evptr]) {
                 ccval2[evptr]=ynorm;
                 if(useCCCVal==true) {
                     cccval2=ccval2[evptr]/cccvalAvg+(cccvalAvg-1)*cccval2/cccvalAvg;
-                    snd->cc(v->getChan(iseg), ieventout[evptr], v->getCtly(iseg), cccval2);
+                    snd->cc(layout->getChan(iseg), ieventout[evptr], layout->getCtly(iseg), cccval2);
                 } else {
-                    snd->cc(v->getChan(iseg), ieventout[evptr], v->getCtly(iseg), ynorm);
+                    snd->cc(layout->getChan(iseg), ieventout[evptr], layout->getCtly(iseg), ynorm);
                 }
             }
         }
@@ -101,6 +108,8 @@ void EventHandlerRect::processPoint(Point * p, RC1 *view)
         act[evptr]=false;
         snd->note(chan[evptr],ieventout[evptr],note[evptr],0);
         note[evptr]=-1;
+        layout->decPressed(isegb[evptr]);
+        isegb[evptr]=-1;
     }
 }
 
@@ -124,6 +133,7 @@ void EventHandlerRect::init()
     ccval2=new double[ntp];
     note=new int[ntp];
     chan=new int[ntp];
+    isegb=new int[ntp];
 
     for(int i=0;i<ntp;i++) {
         ievent[i]=-1;
@@ -133,5 +143,6 @@ void EventHandlerRect::init()
         chan[i]=-1;
         ccval1[i]=-1;
         ccval2[i]=-1;
+        isegb[i]=-1;
     }
 }

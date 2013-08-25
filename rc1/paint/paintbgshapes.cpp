@@ -3,57 +3,45 @@
 PaintBgShapes::PaintBgShapes()
 {
     sPenAct=160;
-    lPenAct=220;
+    lPenAct=240;
+    sBrushAct=160;
+    lBrushAct=200;
+
     sPenPsv=160;
     lPenPsv=10;
-    sBrushAct=160;
-    lBrushAct=100;
     sBrushPsv=160;
     lBrushPsv=80;
 }
 
 void PaintBgShapes::paint(RC1 *view, QPainter * pnt) {
 
-    int eIndex=0;
+    LayoutModel * lay=view->getLayout();
+
+    int iseg=0;
     int xpaint=0;
     int ypaint=0;
     int xpaint1=0;
     int ypaint1=0;
 
     pnt->setPen(Qt::NoPen);
-    for(int y = 0; y < view->getLayout()->getNrows(); y++) {
-        ypaint1=ypaint+view->getLayout()->getRowheightpx(y);
+    for(int y = 0; y < lay->getNrows(); y++) {
+        ypaint1=ypaint+lay->getRowheightpx(y);
         xpaint=0;
-        for (int x = 0; x < view->getLayout()->getNseg(y); x ++) {
-            xpaint1=xpaint+view->getLayout()->getSegwidthpx(eIndex);
+        for (int x = 0; x < lay->getNseg(y); x ++) {
+            xpaint1=xpaint+lay->getSegwidthpx(iseg);
 
-            int col=21*(view->getLayout()->getNote(eIndex)%12);
+            int col=21*(lay->getNote(iseg)%12);
             int lightP=lPenPsv;
             int lightB=lBrushPsv;
             int satP=sPenPsv;
             int satB=sBrushPsv;
 
-            /*
-            for(int i=0;i<pan->seqgrid->getOnIds()->size();i++) {
-//                qDebug() << "onId " << i;
-                if(xpaint<=pan->seqgrid->getOnXbyN(i)) {
-//                    qDebug() << xpaint << " <= " << pan->seqgrid->getOnXbyN(i);
-                    if(xpaint+xpaint1>pan->seqgrid->getOnXbyN(i)) {
-//                        qDebug() << xpaint+xpaint1 << " > " << pan->seqgrid->getOnXbyN(i);
-                        if(ypaint<=pan->seqgrid->getOnYbyN(i)) {
-//                            qDebug() << ypaint << " <= " << pan->seqgrid->getOnYbyN(i);
-                            if(ypaint+ypaint1>pan->seqgrid->getOnYbyN(i)) {
-//                                qDebug() << ypaint+ypaint1 << " > " << pan->seqgrid->getOnYbyN(i);
-                                lightP=lPenAct;
-                                lightB=lBrushAct;
-                                satP=sPenAct;
-                                satB=sBrushAct;
-                            }
-                        }
-                    }
-                }
+            if(lay->getPressed(iseg) > 0) {
+                lightP=lPenAct;
+                lightB=lBrushAct;
+                satP=sPenAct;
+                satB=sBrushAct;
             }
-            */
 
             if(lightB>0) {
                 pnt->setBrush(QColor::fromHsl(col,satB,lightB));
@@ -65,10 +53,10 @@ void PaintBgShapes::paint(RC1 *view, QPainter * pnt) {
             } else {
                 pnt->setPen(Qt::NoPen);
             }
-            pnt->drawRect(xpaint,ypaint,xpaint1,ypaint1);
+            pnt->drawRect(xpaint,ypaint,xpaint1-1,ypaint1-1);
 
             xpaint=xpaint1;
-            eIndex++;
+            iseg++;
         }
         ypaint+=ypaint1;
     }

@@ -8,11 +8,12 @@ PaintStat::PaintStat()
 void PaintStat::paint(RC1 *view, QPainter *pnt)
 {
     pnt->setBrush(Qt::red);
-    pnt->setFont(QFont("Sans",50,5));
+    pnt->setFont(QFont("Sans",30,5));
     QString fpss;
-    fpss.sprintf("%d fps",view->getFps());
-    pnt->drawText(50,250,fpss);
-    pnt->drawText(50,350,QString(view->getFpsT()->toString()));
+    fpss.sprintf("%d fps@",view->getFps());
+    fpss.append(view->getFpsT()->toString());
+    pnt->drawText(10,50,fpss);
+//    pnt->drawText(50,350,QString(view->getFpsT()->toString()));
 }
 
 int PaintStat::getParamCount() {

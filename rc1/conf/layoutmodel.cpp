@@ -49,7 +49,8 @@ LayoutModel::LayoutModel()
     chan=new int[nsegs];
     setAll(nsegs,chan,0);
 
-    pressed=new bool[nsegs];
+    pressed=new int[nsegs];
+    setAll(nsegs,pressed,0);
 
     calcGeo(200,200);
 }
@@ -149,4 +150,21 @@ int LayoutModel::getSegwidthpx(int i) const
 int LayoutModel::getSegwidthmax(int i) const
 {
     return segwidthmax[i];
+}
+
+int LayoutModel::getPressed(int i) const
+{
+    return pressed[i];
+}
+
+void LayoutModel::incPressed(int i)
+{
+    pressed[i]++;
+}
+
+void LayoutModel::decPressed(int i)
+{
+    if(pressed[i]>0) {
+        pressed[i]--;
+    }
 }

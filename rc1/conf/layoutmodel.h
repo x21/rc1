@@ -21,10 +21,13 @@ public:
     int getCtlx(int i) const;
     int getCtly(int i) const;
     int getChan(int i) const;
-
+    int getPressed(int i) const;
+    void incPressed(int i);
+    void decPressed(int i);
 
 private:
     int nrows;
+    int nsegs;
     int *rowheight;
     int rowheightmax;
     int *rowheightpx;
@@ -36,7 +39,7 @@ private:
     int *ctlx;
     int *ctly;
     int *chan;
-    bool *pressed;
+    int *pressed;
     int width;
     int height;
 

@@ -18,6 +18,7 @@ private:
     int ieventoutnext;  // id of next output event
 
     int * note;         // current note
+    int * isegb;        // current segment index buffer
     int * chan;         // current note channel
 
     double * ccval1;    // current controller1 value: xrel

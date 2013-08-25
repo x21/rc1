@@ -10,10 +10,10 @@ EventHandlerRect::EventHandlerRect()
 
 
 //void EventHandlerRect::processPoint(int p->getGid(), Qt::TouchPointState touchPointState, quint16 x1, quint16 y1)
-void EventHandlerRect::processPoint(Point * p, RC1 *view)
+void EventHandlerRect::processPoint(Point * p, RC1 *rc1)
 {
-    ISender * snd=view->getSender();
-    LayoutModel * layout=view->getLayout();
+    ISender * snd=rc1->getSender();
+    LayoutModel * layout=rc1->getLayout();
 
     // 1. figure out, at which index (evptr) the data for this touch point is stored
     qint16 evptr=p->getGid()%ntp;
@@ -27,7 +27,15 @@ void EventHandlerRect::processPoint(Point * p, RC1 *view)
             ieventoutnext++;
         }
     }
-
+    if(p->getState() == Qt::TouchPointPressed) {
+        rc1->getEvstat()->incTouchstartcount();
+    }
+    if(p->getState() == Qt::TouchPointMoved) {
+        rc1->getEvstat()->incTouchmovecount();
+    }
+    if(p->getState() == Qt::TouchPointReleased) {
+        rc1->getEvstat()->incTouchendcount();
+    }
     if( p->getState() == Qt::TouchPointPressed ||
         p->getState() == Qt::TouchPointMoved ) {
 
@@ -76,6 +84,8 @@ void EventHandlerRect::processPoint(Point * p, RC1 *view)
         if(isegb[evptr]!=iseg) {
             if(isegb[evptr]!=-1) {
                 layout->decPressed(isegb[evptr]);
+                // increase statistics for transitions
+                rc1->getEvstat()->incTransitioncount();
             }
             isegb[evptr]=iseg;
             layout->incPressed(isegb[evptr]);

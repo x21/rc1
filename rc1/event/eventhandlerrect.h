@@ -7,7 +7,7 @@ class EventHandlerRect : public IEventHandler
 {
 public:
     EventHandlerRect();
-    void processPoint(Point * p, RC1 * view);
+    void processPoint(Point * p, RC1 * rc1);
 
 private:
     int ntp;            // number of simultanously possible touchpoints

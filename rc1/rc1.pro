@@ -34,7 +34,8 @@ SOURCES += main.cpp\
     comm/libofqf/qoscmsgparser.cpp \
     comm/libofqf/qoscclient.cpp \
     comm/senderoscpuredata.cpp \
-    rc1.cpp
+    rc1.cpp \
+    eventstat.cpp
 
 HEADERS  += \
     storage.h \
@@ -63,7 +64,8 @@ HEADERS  += \
     comm/libofqf/qoscclientinterface.h \
     comm/libofqf/qoscclient.h \
     comm/senderoscpuredata.h \
-    rc1.h
+    rc1.h \
+    eventstat.h
 
 OTHER_FILES += \
     android/res/values-ru/strings.xml \

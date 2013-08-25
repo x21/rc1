@@ -8,6 +8,7 @@
 #include <QTime>
 
 #include "storage.h"
+#include "eventstat.h"
 #include "conf/layoutmodel.h"
 #include "comm/isender.h"
 #include "event/ieventhandler.h"
@@ -28,12 +29,14 @@ public:
     Storage *getStorage() const;
     LayoutModel *getLayout() const;
     ISender *getSender() const;
+    EventStat *getEvstat() const;
     long getNow();
     int getFps();
     QTime *getFpsT();
 
     long getTtl() const;
     void setTtl(long value);
+
 
 protected:
     /*  QGLWidget implementation */
@@ -52,7 +55,8 @@ private:
     IPaint ** prepainters;
     IPointPaint ** pointpainters;
     IPaint ** postpainters;
-
+    // event statistic
+    EventStat * evstat;
     QOscServer * oscin;
 
     QList<QHostAddress> ignoreAddr;
@@ -64,7 +68,7 @@ private:
     long now;
     long ttl;   // time to live for points
 
-    // fps statistic
+    // frame statistic
     int fps;
     int fcnt;
     QTime fpsT;
@@ -73,6 +77,7 @@ private:
     int eventId;
     bool nomouse;
     
+    void resetStat();
 };
 
 #endif // VIEW_H

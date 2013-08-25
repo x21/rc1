@@ -21,8 +21,10 @@ RC1::RC1(QWidget *parent) :
 
     storage=new Storage();
     layout=new LayoutModel();
-    sender=new SenderOscPuredata();
+    sender=new SenderOscPuredata(this);
     ehand=new EventHandlerRect();
+    evstat=new EventStat();
+
     layout->calcGeo(width(),height());    
 
     nPrePainters=1;
@@ -39,6 +41,8 @@ RC1::RC1(QWidget *parent) :
 
     oscin = new QOscServer(3333,this);
     oscin->registerPathObject(this);
+
+    resetStat();
 
     QTimer *timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(update()));
@@ -108,6 +112,7 @@ bool RC1::event(QEvent *event)
         touchPoints = static_cast<QTouchEvent *>(event)->touchPoints();
         foreach (const QTouchEvent::TouchPoint &touchPoint, touchPoints) {
             //            qDebug() << sEvent << ": x:" << touchPoint.pos().x() << " y:" << touchPoint.pos().y() << " t: " << t1.tv_sec << "." << t1.tv_usec;
+            evstat->incToucheventcount();
             Point * p = storage->getPoint(0);
             p->set(touchPoint.pos().x(),touchPoint.pos().y(),this->width(),this->height());
             p->setT(t);
@@ -117,7 +122,7 @@ bool RC1::event(QEvent *event)
             ehand->processPoint(p,this);
         }
         return true;
-    } else if(  !nomouse && (
+    } else if( !nomouse && (
                     event->type()==QEvent::MouseMove ||
                     event->type()==QEvent::MouseButtonPress ||
                     event->type()==QEvent::MouseButtonRelease )) {
@@ -138,7 +143,7 @@ bool RC1::event(QEvent *event)
             state=Qt::TouchPointReleased;
         }
         //        qDebug() << sEvent << ": x:" << meve->pos().x() << " y:" << meve->pos().y() << " t: " << t1.tv_sec << "." << t1.tv_usec;
-
+        evstat->incToucheventcount();
         Point * p = storage->getPoint(0);
         p->set(meve->pos().x(),meve->pos().y(),this->width(),this->height());
         p->setT(t);
@@ -314,8 +319,11 @@ void RC1::signalData(QString path, QVariant data, QHostAddress * host, quint16 p
     }
 }
 
+void RC1::resetStat()
+{
 
-
+    fps=0;
+}
 
 Storage *RC1::getStorage() const
 {
@@ -354,5 +362,10 @@ void RC1::setTtl(long value)
 
 ISender * RC1::getSender() const
 {
-    return sender;
+return sender;
+}
+
+EventStat *RC1::getEvstat() const
+{
+return evstat;
 }

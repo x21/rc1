@@ -1,7 +1,7 @@
 #include "senderoscpuredata.h"
 #include "comm/libofqf/qoscclient.h"
 
-SenderOscPuredata::SenderOscPuredata()
+SenderOscPuredata::SenderOscPuredata(RC1 *rc1)
 {
     oscout=new QOscClient(QHostAddress("255.255.255.255"),3333);
     oscout->setAddress(QHostAddress("255.255.255.255"),3333);
@@ -11,6 +11,7 @@ SenderOscPuredata::SenderOscPuredata()
     }
     prog=0;
     onNoteCnt=0;
+    this->rc1=rc1;
 }
 
 void SenderOscPuredata::note(int c, int voiceId, int f, int vel)
@@ -24,6 +25,9 @@ void SenderOscPuredata::note(int c, int voiceId, int f, int vel)
             v.append(c);
             sendOsc("/note",v);
             onNoteCnt++;
+            rc1->getEvstat()->incOscnoteoncount();
+        } else {
+            rc1->getEvstat()->incAlreadyoncount();
         }
     } else {
         notestate[f]=0;
@@ -33,7 +37,9 @@ void SenderOscPuredata::note(int c, int voiceId, int f, int vel)
         v.append(c);
         sendOsc("/note",v);
         onNoteCnt--;
-        if(onNoteCnt==0) sendOsc("/alloff",1);
+        rc1->getEvstat()->incOscnoteoffcount();
+//  paranoia option, make sure it is really all off
+//        if(onNoteCnt==0) sendOsc("/alloff",1);
     }
 }
 
@@ -61,4 +67,5 @@ void SenderOscPuredata::sendOsc(QString path, QVariant list)
 {
 //    qDebug() << " sendOsc to " << path << " values " << list;
     oscout->sendData(path,list);
+    rc1->getEvstat()->incOsccount();
 }

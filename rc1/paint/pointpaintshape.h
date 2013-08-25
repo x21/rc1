@@ -7,7 +7,7 @@ class PointPaintShape : public IPointPaint
 {
 public:
     PointPaintShape();
-    virtual void paint(Point *point, View *v, QPainter *pnt);
+    virtual void paint(Point *point, RC1 *v, QPainter *pnt);
     virtual int getParamCount();
     virtual float getParam(quint16 n);
     virtual float getParamMin(quint16 n);
@@ -18,7 +18,7 @@ private:
     float * params;
     quint16 nparams;
 
-    float calcRow(quint16 row, Point *pnt, View *v);
+    float calcRow(quint16 row, Point *pnt, RC1 *v);
 };
 
 #endif // POINTPAINTSHAPE_H

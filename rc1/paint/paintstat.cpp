@@ -5,7 +5,7 @@ PaintStat::PaintStat()
     nparams=0;
 }
 
-void PaintStat::paint(View *view, QPainter *pnt)
+void PaintStat::paint(RC1 *view, QPainter *pnt)
 {
     pnt->setBrush(Qt::red);
     pnt->setFont(QFont("Sans",50,5));

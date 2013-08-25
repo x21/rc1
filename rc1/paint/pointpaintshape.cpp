@@ -68,7 +68,7 @@ int PointPaintShape::getParamCount()
     return nparams;
 }
 
-void PointPaintShape::paint(Point * point, View * v, QPainter * pnt)
+void PointPaintShape::paint(Point * point, RC1 * v, QPainter * pnt)
 {
     float radX=calcRow(2,point,v);
     float radY=calcRow(3,point,v);
@@ -105,7 +105,7 @@ void PointPaintShape::paint(Point * point, View * v, QPainter * pnt)
     pnt->resetTransform();
 }
 
-float PointPaintShape::calcRow(quint16 row, Point * pnt, View * v) {
+float PointPaintShape::calcRow(quint16 row, Point * pnt, RC1 * v) {
     quint16 i0=row*6;
     float res=params[i0];       // spalte 0: konstantanteil
     res+=params[i0+1]*pnt->getX();

@@ -6,6 +6,7 @@ LayoutModel::LayoutModel()
     width=200;
     height=200;
     nrows=2;
+    nsegs=12;
 
     nseg = new int[nrows];
     nseg[0] = 5;
@@ -17,15 +18,15 @@ LayoutModel::LayoutModel()
     rowheight[1] = 4;
     rowheightmax=8;
 
-    segwidth = new int[12];
-    segwidthpx = new int[12];
-    setAll(12,segwidth,1);
+    segwidth = new int[nsegs];
+    segwidthpx = new int[nsegs];
+    setAll(nsegs,segwidth,1);
 
-    segwidthmax=new int[2];
+    segwidthmax=new int[nrows];
     segwidthmax[0]= 5;
     segwidthmax[1]= 7;
 
-    note = new int[12];
+    note = new int[nsegs];
     note[0]=50;
     note[1]=51;
     note[2]=52;
@@ -39,21 +40,23 @@ LayoutModel::LayoutModel()
     note[10]=60;
     note[11]=61;
 
-    ctlx=new int[12];
-    setAll(12,ctlx,0);
+    ctlx=new int[nsegs];
+    setAll(nsegs,ctlx,0);
 
-    ctly=new int[12];
-    setAll(12,ctly,0);
+    ctly=new int[nsegs];
+    setAll(nsegs,ctly,0);
 
-    chan=new int[12];
-    setAll(12,chan,0);
+    chan=new int[nsegs];
+    setAll(nsegs,chan,0);
+
+    pressed=new bool[nsegs];
 
     calcGeo(200,200);
 }
 
 void LayoutModel::calcGeo(int w, int h)
 {
-    qDebug() << "Cacl geo " << w << " " << h;
+    // qDebug() << "Cacl geo " << w << " " << h;
     width=w;
     height=h;
     int i=0;

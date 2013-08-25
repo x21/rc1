@@ -28,3 +28,6 @@
 /home/c1/rc1/rc1/android/libs/armeabi-v7a/librc1.so \
 /home/c1/rc1/rc1/android/libs/armeabi-v7a/lib--Managed_by_Qt_Creator--plugins_platforms_libqoffscreen.so \
 /home/c1/rc1/rc1/android/libs/armeabi-v7a/gdbserver \
+/home/c1/rc1/rc1/android/libs/x86/libgnustl_shared.so \
+/home/c1/rc1/rc1/android/libs/x86/librc1.so \
+/home/c1/rc1/rc1/android/libs/x86/gdbserver \

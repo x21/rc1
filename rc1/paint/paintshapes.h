@@ -8,7 +8,7 @@ class PaintShapes : public IPaint
 {
 public:
     PaintShapes();
-    virtual void paint(View *view, QPainter *pnt);
+    virtual void paint(RC1 *view, QPainter *pnt);
     virtual int getParamCount();
     virtual float getParam(quint16 n);
     virtual float getParamMin(quint16 n);

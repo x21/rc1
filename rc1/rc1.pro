@@ -14,7 +14,6 @@ TEMPLATE = app
 INCLUDEPATH += comm/libofqf
 
 SOURCES += main.cpp\
-    view.cpp \
     storage.cpp \
     conf/layoutmodel.cpp \
     event/eventhandlerrect.cpp \
@@ -34,10 +33,10 @@ SOURCES += main.cpp\
     comm/libofqf/qoscproxy.cpp \
     comm/libofqf/qoscmsgparser.cpp \
     comm/libofqf/qoscclient.cpp \
-    comm/senderoscpuredata.cpp
+    comm/senderoscpuredata.cpp \
+    rc1.cpp
 
 HEADERS  += \
-    view.h \
     storage.h \
     conf/layoutmodel.h \
     event/eventhandlerrect.h \
@@ -63,7 +62,8 @@ HEADERS  += \
     comm/libofqf/qoscmsgparser.h \
     comm/libofqf/qoscclientinterface.h \
     comm/libofqf/qoscclient.h \
-    comm/senderoscpuredata.h
+    comm/senderoscpuredata.h \
+    rc1.h
 
 OTHER_FILES += \
     android/res/values-ru/strings.xml \

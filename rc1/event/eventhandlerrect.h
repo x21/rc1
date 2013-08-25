@@ -7,14 +7,9 @@ class EventHandlerRect : public IEventHandler
 {
 public:
     EventHandlerRect();
-    EventHandlerRect(LayoutModel * mod, ISender * snd);
-    //    void processPoint(int touchPointId, Qt::TouchPointState touchPointState, quint16 touchPointPosX, quint16 touchPointPosY);
-    void processPoint(Point * p);
+    void processPoint(Point * p, RC1 * view);
 
 private:
-    LayoutModel * mod;
-    ISender * snd;
-
     int ntp;            // number of simultanously possible touchpoints
 
     bool * act;         // is touched?

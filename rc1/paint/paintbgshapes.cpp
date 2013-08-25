@@ -12,7 +12,7 @@ PaintBgShapes::PaintBgShapes()
     lBrushPsv=80;
 }
 
-void PaintBgShapes::paint(View *view, QPainter * pnt) {
+void PaintBgShapes::paint(RC1 *view, QPainter * pnt) {
 
     int eIndex=0;
     int xpaint=0;

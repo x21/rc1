@@ -36,6 +36,7 @@ private:
     int *ctlx;
     int *ctly;
     int *chan;
+    bool *pressed;
     int width;
     int height;
 

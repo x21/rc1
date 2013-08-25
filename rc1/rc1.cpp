@@ -1,7 +1,7 @@
 #include <QDebug>
 #include <QtWidgets>
 #include <QTimer>
-#include "view.h"
+#include "rc1.h"
 #include "event/eventhandlerrect.h"
 #include "comm/senderdebug.h"
 #include "comm/senderoscpuredata.h"
@@ -10,18 +10,19 @@
 #include "paint/paintstat.h"
 
 
-View::View(QWidget *parent) :
+RC1::RC1(QWidget *parent) :
     QGLWidget(parent)
 {
     setAttribute(Qt::WA_AcceptTouchEvents,true);
 //    qDebug() << "View() size:" << width() << " " << height();
     eventId = 1;
     nomouse = false;
-    ttl=5000;
+    ttl=10000;
 
     storage=new Storage();
     layout=new LayoutModel();
-    ehand=new EventHandlerRect(layout, new SenderOscPuredata());
+    sender=new SenderOscPuredata();
+    ehand=new EventHandlerRect();
     layout->calcGeo(width(),height());    
 
     nPrePainters=1;
@@ -47,7 +48,7 @@ View::View(QWidget *parent) :
     fcnt=0;    
 }
 
-void View::paintEvent(QPaintEvent *event)
+void RC1::paintEvent(QPaintEvent *event)
 {
     now=QDateTime::currentMSecsSinceEpoch();
 
@@ -83,7 +84,7 @@ void View::paintEvent(QPaintEvent *event)
     fcnt++;
 }
 
-void View::resizeEvent(QResizeEvent *)
+void RC1::resizeEvent(QResizeEvent *)
 {
     //qDebug() << "resize event";
     layout->calcGeo(width(),height());
@@ -93,7 +94,7 @@ void View::resizeEvent(QResizeEvent *)
     }
 }
 
-bool View::event(QEvent *event)
+bool RC1::event(QEvent *event)
 {
     QList<QTouchEvent::TouchPoint> touchPoints;
     if( event->type()==QEvent::TouchEnd ||
@@ -113,7 +114,7 @@ bool View::event(QEvent *event)
             p->setGid(touchPoint.id());
             p->setState(touchPoint.state());
             storage->next();
-            ehand->processPoint(p);
+            ehand->processPoint(p,this);
         }
         return true;
     } else if(  !nomouse && (
@@ -144,13 +145,13 @@ bool View::event(QEvent *event)
         p->setGid(eventId);
         p->setState(state);
         storage->next();
-        ehand->processPoint(p);
+        ehand->processPoint(p,this);
         return true;
     }
     return QWidget::event(event);
 }
 
-void View::signalData(QString path, QVariant data, QHostAddress * host, quint16 port)
+void RC1::signalData(QString path, QVariant data, QHostAddress * host, quint16 port)
 {
 //    qDebug() << "got osc signal " << path << " data " << data << " source " << host->toString();
     int ignoreIndex=ignoreAddr.indexOf(*host);
@@ -316,37 +317,42 @@ void View::signalData(QString path, QVariant data, QHostAddress * host, quint16 
 
 
 
-Storage *View::getStorage() const
+Storage *RC1::getStorage() const
 {
     return storage;
 }
 
-LayoutModel *View::getLayout() const
+LayoutModel *RC1::getLayout() const
 {
     return layout;
 }
 
-long View::getNow()
+long RC1::getNow()
 {
     return now;
 }
 
-int View::getFps()
+int RC1::getFps()
 {
     return fps;
 }
 
-QTime * View::getFpsT()
+QTime * RC1::getFpsT()
 {
     return &fpsT;
 }
 
-long View::getTtl() const
+long RC1::getTtl() const
 {
     return ttl;
 }
 
-void View::setTtl(long value)
+void RC1::setTtl(long value)
 {
     ttl = value;
+}
+
+ISender * RC1::getSender() const
+{
+    return sender;
 }

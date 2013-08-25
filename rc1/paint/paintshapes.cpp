@@ -8,7 +8,7 @@ PaintShapes::PaintShapes()
     pps=new PointPaintShape();
 }
 
-void PaintShapes::paint(View *view, QPainter *pnt)
+void PaintShapes::paint(RC1 *view, QPainter *pnt)
 {
     pnt->setBrush(Qt::green);
     Storage * storage = view->getStorage();

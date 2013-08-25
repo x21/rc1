@@ -9,10 +9,10 @@ package org.qtproject.example.rc1;
 
 public final class R {
     public static final class array {
-        public static final int bundled_in_assets=0x7f030003;
-        public static final int bundled_in_lib=0x7f030002;
+        public static final int bundled_in_assets=0x7f030004;
+        public static final int bundled_in_lib=0x7f030003;
         public static final int bundled_libs=0x7f030001;
-        public static final int qt_libs=0x7f030004;
+        public static final int qt_libs=0x7f030002;
         public static final int qt_sources=0x7f030000;
     }
     public static final class attr {

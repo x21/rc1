@@ -8,6 +8,8 @@
 #include <QTime>
 
 #include "storage.h"
+#include "conf/layoutmodel.h"
+#include "comm/isender.h"
 #include "event/ieventhandler.h"
 #include "paint/ipaint.h"
 #include "paint/ipointpaint.h"
@@ -15,15 +17,17 @@
 
 class IPaint;
 class IPointPaint;
+class IEventHandler;
 
-class View : public QGLWidget, PathObject
+class RC1 : public QGLWidget, PathObject
 {
     Q_OBJECT
 
 public:
-    explicit View(QWidget *parent = 0);
+    explicit RC1(QWidget *parent = 0);
     Storage *getStorage() const;
     LayoutModel *getLayout() const;
+    ISender *getSender() const;
     long getNow();
     int getFps();
     QTime *getFpsT();
@@ -43,6 +47,7 @@ protected:
 private:
     Storage * storage;
     LayoutModel * layout;
+    ISender * sender;
     IEventHandler * ehand;
     IPaint ** prepainters;
     IPointPaint ** pointpainters;

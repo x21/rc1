@@ -14,7 +14,7 @@ RC1::RC1(QWidget *parent) :
     QGLWidget(parent)
 {
     setAttribute(Qt::WA_AcceptTouchEvents,true);
-//    qDebug() << "View() size:" << width() << " " << height();
+    qDebug() << "View() size:" << width() << " " << height();
     eventId = 1;
     nomouse = false;
     ttl=10000;
@@ -22,6 +22,7 @@ RC1::RC1(QWidget *parent) :
     storage=new Storage();
     layout=new LayoutModel();
     sender=new SenderOscPuredata(this);
+//    sender=new SenderDebug();
     ehand=new EventHandlerRect();
     evstat=new EventStat();
 

@@ -16,9 +16,9 @@ void PaintStat::paint(RC1 *rc1, QPainter *pnt)
     fpss.sprintf("rc1.c1audio.com : %d fps@", rc1->getFps());
     fpss.append(rc1->getFpsT()->toString());
     pnt->drawText(10,2*linehight,fpss);
-    fpss.sprintf("%d touchs | %d start | %d move | %d end | %d trans",
+    fpss.sprintf("%d touchs | %d begin | %d move | %d end | %d trans",
                  evstat->getToucheventcount(),
-                 evstat->getTouchstartcount(),
+                 evstat->getTouchbegincount(),
                  evstat->getTouchmovecount(),
                  evstat->getTouchendcount(),
                  evstat->getTransitioncount());

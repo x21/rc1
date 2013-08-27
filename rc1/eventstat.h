@@ -10,8 +10,8 @@ public:
     int getToucheventcount() const;
     void incToucheventcount();
 
-    int getTouchstartcount() const;
-    void incTouchstartcount();
+    int getTouchbegincount() const;
+    void incTouchbegincount();
 
     int getTouchmovecount() const;
     void incTouchmovecount();
@@ -36,7 +36,7 @@ public:
 
 private:
     int toucheventcount;
-    int touchstartcount;
+    int touchsbegincount;
     int touchmovecount;
     int touchendcount;
     int osccount;

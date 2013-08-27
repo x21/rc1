@@ -28,7 +28,7 @@ void EventHandlerRect::processPoint(Point * p, RC1 *rc1)
         }
     }
     if(p->getState() == Qt::TouchPointPressed) {
-        rc1->getEvstat()->incTouchstartcount();
+        rc1->getEvstat()->incTouchbegincount();
     }
     if(p->getState() == Qt::TouchPointMoved) {
         rc1->getEvstat()->incTouchmovecount();

@@ -65,14 +65,14 @@ void EventStat::incTouchmovecount()
     touchmovecount++;
 }
 
-int EventStat::getTouchstartcount() const
+int EventStat::getTouchbegincount() const
 {
-    return touchstartcount;
+    return touchsbegincount;
 }
 
-void EventStat::incTouchstartcount()
+void EventStat::incTouchbegincount()
 {
-    touchstartcount++;
+    touchsbegincount++;
 }
 
 int EventStat::getToucheventcount() const
@@ -98,7 +98,7 @@ void EventStat::incAlreadyoncount()
 void EventStat::resetStat()
 {
     toucheventcount=0;
-    touchstartcount=0;
+    touchsbegincount=0;
     touchmovecount=0;
     touchendcount=0;
     transitioncount=0;

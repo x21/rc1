@@ -19,6 +19,9 @@ private:
     quint16 nparams;
     quint16 ncols;
     quint16 nrows;
+    QString platform_os;
+    int fontDiv;
+    int lineDiv;
 };
 
 #endif // PAINTSTAT_H

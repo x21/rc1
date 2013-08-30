@@ -55,6 +55,8 @@ private:
     IPaint ** prepainters;
     IPointPaint ** pointpainters;
     IPaint ** postpainters;
+    // painter switch
+    bool * painterOn;
     // event statistic
     EventStat * evstat;
     QOscServer * oscin;
@@ -76,6 +78,10 @@ private:
     // emulated touch point id for mouse events
     int eventId;
     bool nomouse;
+    
+    // lists, required to manage tuio
+    QList<quint32> tuioAlive;
+    QList<quint16> tuioSources;
     
     void resetStat();
 };

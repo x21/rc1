@@ -35,7 +35,8 @@ SOURCES += main.cpp\
     comm/libofqf/qoscclient.cpp \
     comm/senderoscpuredata.cpp \
     rc1.cpp \
-    eventstat.cpp
+    eventstat.cpp \
+    paint/pointpaintsphere.cpp
 
 HEADERS  += \
     storage.h \
@@ -65,7 +66,8 @@ HEADERS  += \
     comm/libofqf/qoscclient.h \
     comm/senderoscpuredata.h \
     rc1.h \
-    eventstat.h
+    eventstat.h \
+    paint/pointpaintsphere.h
 
 OTHER_FILES += \
     android/res/values-ru/strings.xml \

@@ -6,7 +6,8 @@
 #include "comm/senderdebug.h"
 #include "comm/senderoscpuredata.h"
 #include "paint/paintbgshapes.h"
-#include "paint/paintshapes.h"
+#include "paint/pointpaintshape.h"
+#include "paint/pointpaintsphere.h"
 #include "paint/paintstat.h"
 
 
@@ -32,13 +33,27 @@ RC1::RC1(QWidget *parent) :
     prepainters=new IPaint*[nPrePainters];
     prepainters[0]=new PaintBgShapes();
 
-    nPointPainters=1;
+    nPointPainters=5;
     pointpainters=new IPointPaint*[nPointPainters];
+//    pointpainters[0]=new PointPaintSphere();
     pointpainters[0]=new PointPaintShape();
+    pointpainters[1]=new PointPaintShape();
+    pointpainters[2]=new PointPaintShape();
+    pointpainters[3]=new PointPaintShape();
+    pointpainters[4]=new PointPaintShape();
 
     nPostPainters=1;
     postpainters=new IPaint*[nPostPainters];
     postpainters[0]=new PaintStat();
+    
+    painterOn=new bool[nPrePainters+nPointPainters+nPostPainters];
+    painterOn[0]=true;
+    painterOn[1]=true;
+    painterOn[2]=false;
+    painterOn[3]=false;
+    painterOn[4]=false;
+    painterOn[5]=false;
+    painterOn[6]=true;
 
     oscin = new QOscServer(3333,this);
     oscin->registerPathObject(this);
@@ -61,31 +76,39 @@ void RC1::paintEvent(QPaintEvent *event)
         fpsT.restart();
         fps=fcnt;
         fcnt=0;
+//        qDebug() << "fps: " << fps;
     }
 
     QPainter painter(this);
-
+    int k=0;
     for(int i=0;i<nPrePainters;i++) {
-        prepainters[i]->paint(this,&painter);
+        if(painterOn[k]) {
+            prepainters[i]->paint(this,&painter);
+        }
+        k++;
     }
-
-    for(int j=0;j<nPointPainters;j++) {
-        for(int i=0; i<storage->getLen();i++) {
-            Point * p = storage->getPoint(i);
-            if(p!=NULL) {
-                if(now-p->getT() < ttl) {
-                    if(p->getX()>=0 && p->getY()>=0) {
-                        pointpainters[j]->paint(p,this,&painter);
+    for(int i=storage->getLen()-1;i>0;i--) {
+        Point * p = storage->getPoint(i);
+        if(p!=NULL) {
+            int lifetime=now-p->getT();
+            if(lifetime >0 && lifetime< ttl) {
+                if(p->getX()>=0 && p->getY()>=0) {
+                    for(int j=0;j<nPointPainters;j++) {
+                        if(painterOn[j+k]) {
+                            pointpainters[j]->paint(p,this,&painter);
+                        }
                     }
                 }
             }
         }
     }
-
+    k+=nPointPainters;
     for(int i=0;i<nPostPainters;i++) {
-        postpainters[i]->paint(this,&painter);
+        if(painterOn[k]) {
+            postpainters[i]->paint(this,&painter);
+        }
+        k++;
     }
-
     fcnt++;
 }
 
@@ -195,6 +218,73 @@ void RC1::signalData(QString path, QVariant data, QHostAddress * host, quint16 p
             }
         }
 
+        if(path=="/misuco/painter") {
+            if(dl.size()==2) {
+                painterOn[dl.at(0).toInt()]=dl.at(1).toBool();
+            }
+        }
+        
+        if(path=="/tuio/2Dcur") {
+            qDebug() << "got /tuio/2Dcur signal " << path << " data " << data << " source " << host->toString();
+            if(dl.size()>0) {
+                
+                // find source host in ip source adress table
+                qint16 sourceId=tuioSources.indexOf(host->toIPv4Address());
+                // if not yet exists, add it
+                if(sourceId==-1) {
+                    tuioSources.append(host->toIPv4Address());
+                    sourceId=tuioSources.size()-1;
+                }
+                sourceId++; // source Id=0 is for local events
+                
+                if(dl.at(0)=="set") {
+                    QDateTime ct = QDateTime::currentDateTime();
+                    long t=ct.toMSecsSinceEpoch();
+                    
+                    quint32 sid=dl.at(1).toInt()%65536 + sourceId*65536;
+                    // session id:
+                    // bit0-15: sid according message
+                    // bit16-31: sourceId according to index in ip list
+                    quint16 xpos=dl.at(2).toFloat()*layout->getWidth();
+                    quint16 ypos=dl.at(3).toFloat()*layout->getHeight();
+                    Qt::TouchPointState touchType=Qt::TouchPointMoved;
+                    if(!tuioAlive.contains(sid)) {
+                        tuioAlive.append(sid);
+                        touchType=Qt::TouchPointPressed;
+                        //                   qDebug() << "new point with id " << sid;
+                    }
+                    Point * p = storage->getPoint(0);
+                    p->set(xpos,ypos,this->layout->getWidth(),this->layout->getHeight());
+                    p->setT(t);
+                    p->setGid(sid);
+                    p->setState(touchType);
+                    storage->next();
+                    ehand->processPoint(p,this);
+                    
+                }
+                if(dl.at(0)=="alive") {
+                    for(int i=0;i<tuioAlive.size();i++) {
+                        if(tuioAlive.at(i)/65536==sourceId) {
+                            if(!dl.contains(tuioAlive.at(i)-sourceId*65536)) {
+                                QDateTime ct = QDateTime::currentDateTime();
+                                long t=ct.toMSecsSinceEpoch();
+                                //                            qDebug() << "removing point with id " << tuioAlive.at(i);
+                                Point * p = storage->getPoint(0);
+                                p->set(0,0,this->layout->getWidth(),this->layout->getHeight());
+                                p->setT(t);
+                                p->setGid(tuioAlive.at(i));
+                                p->setState(Qt::TouchPointReleased);
+                                storage->next();
+                                ehand->processPoint(p,this);                                
+                                tuioAlive.removeAt(i);
+                                i--;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        
         /*
         if(path=="/misuco/channel") {
             if(dl.size()==1) {
@@ -202,11 +292,6 @@ void RC1::signalData(QString path, QVariant data, QHostAddress * host, quint16 p
             }
         }
 
-        if(path=="/misuco/painter") {
-            if(dl.size()==2) {
-                pan->setPainter(dl.at(0).toInt(),dl.at(1).toBool());
-            }
-        }
 
         if(path=="/misuco/painterrst") {
             if(dl.size()==1) {
@@ -275,48 +360,7 @@ void RC1::signalData(QString path, QVariant data, QHostAddress * host, quint16 p
             }
         }
 
-        if(path=="/tuio/2Dcur") {
-    //        qDebug() << "got /tuio/2Dcur signal " << path << " data " << data << " source " << host->toString();
-            if(dl.size()>0) {
-
-                // find source host in ip source adress table
-                qint16 sourceId=tuioSources.indexOf(host->toIPv4Address());
-                // if not yet exists, add it
-                if(sourceId==-1) {
-                    tuioSources.append(host->toIPv4Address());
-                    sourceId=tuioSources.size()-1;
-                }
-                sourceId++; // source Id=0 is for local events
-
-                if(dl.at(0)=="set") {
-                    quint32 sid=dl.at(1).toInt()%65536 + sourceId*65536;
-                    // session id:
-                    // bit0-15: sid according message
-                    // bit16-31: sourceId according to index in ip list
-                    quint16 xpos=dl.at(2).toFloat()*panmod->width;
-                    quint16 ypos=dl.at(3).toFloat()*panmod->height;
-                    Qt::TouchPointState touchType=Qt::TouchPointMoved;
-                    if(!tuioAlive.contains(sid)) {
-                       tuioAlive.append(sid);
-                       touchType=Qt::TouchPointPressed;
-    //                   qDebug() << "new point with id " << sid;
-                    }
-                    ehand->processPoint(sid,touchType,xpos,ypos);
-                }
-                if(dl.at(0)=="alive") {
-                    for(int i=0;i<tuioAlive.size();i++) {
-                        if(tuioAlive.at(i)/65536==sourceId) {
-                            if(!dl.contains(tuioAlive.at(i)-sourceId*65536)) {
-    //                            qDebug() << "removing point with id " << tuioAlive.at(i);
-                                ehand->processPoint(tuioAlive.at(i),Qt::TouchPointReleased,0,0);
-                                tuioAlive.removeAt(i);
-                                i--;
-                            }
-                        }
-                    }
-                }
-            }
-        } */
+ */
     }
 }
 
